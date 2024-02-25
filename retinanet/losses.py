@@ -10,6 +10,15 @@ def calc_iou(a, b):
     intersection = 0.0
     ua = 1.0
 
+    for i in range(a.shape[0]):
+        x1 = max(a[i, 0], b[:, 0])
+        y1 = max(a[i, 1], b[:, 1])
+        x2 = min(a[i, 2], b[:, 2])
+        y2 = min(a[i, 3], b[:, 3])
+
+        inter = max(0, x2 - x1) * max(0, y2 - y1)
+        intersection += inter
+
     ##################################################################
 
     ua = torch.clamp(ua, min=1e-8)
@@ -108,9 +117,9 @@ class FocalLoss(nn.Module):
             # TODO: Please substitute the "?" to calculate Focal Loss
             ##################################################################
             
-            focal_weight = "?"
+            focal_weight = alpha_factor * torch.pow(focal_weight, gamma)
 
-            bce = "?"
+            bce = -(torch.log(1.0 - classification))
 
             cls_loss = focal_weight * bce
 
