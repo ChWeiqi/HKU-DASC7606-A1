@@ -55,7 +55,7 @@ class ResNet(nn.Module):
         # TODO: Please substitute the "?" to declare Focal Loss
         ##################################################################
 
-        self.focalLoss = self.focalLoss.cuda()
+        self.focalLoss = losses.FocalLoss()
 
         ##################################################################
 
