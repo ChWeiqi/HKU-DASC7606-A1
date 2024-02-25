@@ -10,14 +10,15 @@ def calc_iou(a, b):
     intersection = 0.0
     ua = 1.0
 
-    for i in range(a.shape[0]):
-        x1 = max(a[i, 0], b[:, 0])
-        y1 = max(a[i, 1], b[:, 1])
-        x2 = min(a[i, 2], b[:, 2])
-        y2 = min(a[i, 3], b[:, 3])
+    inter_x1 = torch.max(a[:, 0].unsqueeze(1), b[:, 0])
+    inter_y1 = torch.max(a[:, 1].unsqueeze(1), b[:, 1])
+    inter_x2 = torch.min(a[:, 2].unsqueeze(1), b[:, 2])
+    inter_y2 = torch.min(a[:, 3].unsqueeze(1), b[:, 3])
 
-        inter = max(0, x2 - x1) * max(0, y2 - y1)
-        intersection += inter
+    intersection = (inter_x2 - inter_x1 + 1).clamp(0) * (inter_y2 - inter_y1 + 1).clamp(0)
+    area_a = (a[:, 2] - a[:, 0] + 1) * (a[:, 3] - a[:, 1] + 1)
+    area_b = (b[:, 2] - b[:, 0] + 1) * (b[:, 3] - b[:, 1] + 1)
+    ua = area_a.unsqueeze(1) + area_b - intersection
 
     ##################################################################
 
