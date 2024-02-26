@@ -244,14 +244,15 @@ class Normalizer(object):
         ###################################################################
         # TODO: Please modify and fill the codes here to complete the image normalization
         ##################################################################
-        image = image.astype(np.float32)
-        image /= 255.0
-        image -= self.mean
-        image /= self.std
+        # image = image.astype(np.float32)
+        # image /= 255.0
+        # image -= self.mean
+        # image /= self.std
+        return {'img':((image.astype(np.float32)-self.mean)/self.std), 'annot': annots}
 
         ##################################################################
 
-        return {'img':(image), 'annot': annots}
+        # return {'img':(image), 'annot': annots}
 
 
 class UnNormalizer(object):

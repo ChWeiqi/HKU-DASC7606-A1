@@ -6,19 +6,18 @@ def calc_iou(a, b):
     ###################################################################
     # TODO: Please modify and fill the codes below to calculate the iou of the two boxes a and b
     ###################################################################
-    
-    intersection = 0.0
-    ua = 1.0
 
-    inter_x1 = torch.max(a[:, 0].unsqueeze(1), b[:, 0])
-    inter_y1 = torch.max(a[:, 1].unsqueeze(1), b[:, 1])
-    inter_x2 = torch.min(a[:, 2].unsqueeze(1), b[:, 2])
-    inter_y2 = torch.min(a[:, 3].unsqueeze(1), b[:, 3])
+    area = (b[:, 2] - b[:, 0]) * (b[:, 3] - b[:, 1])
 
-    intersection = (inter_x2 - inter_x1 + 1).clamp(0) * (inter_y2 - inter_y1 + 1).clamp(0)
-    area_a = (a[:, 2] - a[:, 0] + 1) * (a[:, 3] - a[:, 1] + 1)
-    area_b = (b[:, 2] - b[:, 0] + 1) * (b[:, 3] - b[:, 1] + 1)
-    ua = area_a.unsqueeze(1) + area_b - intersection
+    iw = torch.min(torch.unsqueeze(a[:, 2], dim=1), b[:, 2]) - torch.max(torch.unsqueeze(a[:, 0], 1), b[:, 0])
+    ih = torch.min(torch.unsqueeze(a[:, 3], dim=1), b[:, 3]) - torch.max(torch.unsqueeze(a[:, 1], 1), b[:, 1])
+
+    iw = torch.clamp(iw, min=0)
+    ih = torch.clamp(ih, min=0)
+
+    ua = torch.unsqueeze((a[:, 2] - a[:, 0]) * (a[:, 3] - a[:, 1]), dim=1) + area - iw * ih
+
+    intersection = iw * ih
 
     ##################################################################
 
@@ -120,7 +119,7 @@ class FocalLoss(nn.Module):
             
             focal_weight = alpha_factor * torch.pow(focal_weight, gamma)
 
-            bce = -(torch.log(1.0 - classification))
+            bce = -(targets * torch.log(classification) + (1.0 - targets) * torch.log(1.0 - classification))
 
             cls_loss = focal_weight * bce
 

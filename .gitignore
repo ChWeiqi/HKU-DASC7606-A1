@@ -2,3 +2,6 @@
 *.zip
 data/*
 *.pth
+output/*
+*.tar.gz
+.DS_STORE

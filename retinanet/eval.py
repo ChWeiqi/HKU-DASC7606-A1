@@ -21,6 +21,8 @@ class Evaluation:
                 data = dataset[index]
                 scale = data['scale']
 
+                # print(data)
+
                 # run network
                 if torch.cuda.is_available():
                     scores, labels, boxes = model(data['img'].permute(2, 0, 1).cuda().float().unsqueeze(dim=0))
@@ -29,6 +31,8 @@ class Evaluation:
                 scores = scores.cpu()
                 labels = labels.cpu()
                 boxes  = boxes.cpu()
+                
+                # print(labels)
 
                 # correct boxes for image scale
                 boxes /= scale

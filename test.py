@@ -48,8 +48,12 @@ def main(args=None):
         raise ValueError('Unsupported model depth in source code, must be one of 18, 34, 50, 101, 152')
 
     # Load the model
-    retinanet = torch.load(os.path.join(parser.checkpoint_path))
+    if torch.cuda.is_available():
+        retinanet = torch.load(os.path.join(parser.checkpoint_path))
+    else:
+        retinanet = torch.load(os.path.join(parser.checkpoint_path), map_location='cpu')
 
+    # use_gpu = True
     use_gpu = True
 
     if use_gpu:
